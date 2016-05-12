@@ -3,7 +3,7 @@
 
 // Change this definition to 1 if you want to enable link changes for the
 // advanced assignment.
-#define LINKCHANGES 0
+#define LINKCHANGES 1
 
 // A distance table used within each node
 struct distance_table {

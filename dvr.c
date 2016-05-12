@@ -5,7 +5,7 @@
 
 // Event types
 #define FROM_LAYER2 2
-#define LINK_CHANGE 10
+#define LINK_CHANGE 1
 #define INFINITY 9999
 
 // Declarations for external functions in each node's implementation file
@@ -386,9 +386,11 @@ void tolayer2(struct rtpkt packet) {
 
 struct distance_table dt0, dt1, dt2, dt3;
 struct rtpkt packet;
+
 extern void rtinit0(){
 	//Init min cost
 	int i,j;
+	printf("At time t=%.3f, rtinit0() called \n", clocktime);
 	for(i = 0; i< 4; i++){
 		packet.mincost[i] = INFINITY;
 		for(j = 0; j<4;j++){
@@ -407,6 +409,7 @@ extern void rtinit0(){
 			}
 		}
 	}
+  packet.mincost[0] = 0;
 	packet.sourceid = 0;
 	packet.destid = 1;
 	tolayer2(packet);
@@ -422,6 +425,7 @@ extern void rtinit0(){
 extern void rtinit1(){
 	//Init min cost
 	int i,j;
+	printf("At time t=%.3f, rtinit1() called \n", clocktime);
 	for(i = 0; i< 4; i++){
 		packet.mincost[i] = INFINITY;
 		for(j = 0; j<4;j++){
@@ -439,6 +443,7 @@ extern void rtinit1(){
 			}
 		}
 	}
+  packet.mincost[1] = 0;
 	packet.sourceid = 1;
 	packet.destid = 0;
 	tolayer2(packet);
@@ -450,6 +455,7 @@ extern void rtinit1(){
 extern void rtinit2(){
 	//Init min cost
 	int i,j;
+	printf("At time t=%.3f, rtinit2() called \n", clocktime);
 	for(i = 0; i< 4; i++){
 		packet.mincost[i] = INFINITY;
 		for(j = 0; j<4;j++){
@@ -463,11 +469,12 @@ extern void rtinit2(){
 	//find and save the minmum costs if they exist
 	for(i = 0; i< 4; i++){
 		for(j = 0; j<4;j++){
-			if(packet.mincost[i] > dt2.costs[i][j]){
+			if(packet.mincost[i] > dt2.costs[i][j] ){
 				packet.mincost[i] = dt2.costs[i][j];
 			}
 		}
 	}
+  packet.mincost[2] = 0;
 	packet.sourceid = 2;
 	packet.destid = 0;
 	tolayer2(packet);
@@ -480,9 +487,11 @@ extern void rtinit2(){
 	packet.destid = 3;
 	tolayer2(packet);
 }
+
 extern void rtinit3(){
 	//Init min cost
 	int i,j;
+	printf("At time t=%.3f, rtinit3() called \n", clocktime);
 	for(i = 0; i< 4; i++){
 		packet.mincost[i] = INFINITY;
 		for(j = 0; j<4;j++){
@@ -500,6 +509,7 @@ extern void rtinit3(){
 			}
 		}
 	}
+  packet.mincost[3] = 0;
 	packet.sourceid = 3;
 	packet.destid = 0;
 	tolayer2(packet);
@@ -508,12 +518,14 @@ extern void rtinit3(){
 	packet.destid = 2;
 	tolayer2(packet);
 }
+
 extern void rtupdate0(struct rtpkt *rcvdpkt){
 	int needUpdate = 0;
 	int i,j;
 	for(i = 0; i< 4; i++){
 	packet.mincost[i] = INFINITY;
 	}
+	printf("At time t=%.3f, rtupdate0() called. node 0 receives a packet from node %d\n",clocktime,rcvdpkt->sourceid );
 	for(i = 0; i< 4; ++i){
 		if(rcvdpkt->mincost[i] + dt0.costs[rcvdpkt->sourceid][rcvdpkt->sourceid] < dt0.costs[i][rcvdpkt->sourceid]){
 			needUpdate = 1;
@@ -528,6 +540,7 @@ extern void rtupdate0(struct rtpkt *rcvdpkt){
 				}
 			}
 		}
+    packet.mincost[0] = 0;
 		packet.sourceid = 0;
 		packet.destid = 1;
 		tolayer2(packet);
@@ -548,6 +561,7 @@ extern void rtupdate1(struct rtpkt *rcvdpkt){
 	for(i = 0; i< 4; i++){
 	packet.mincost[i] = INFINITY;
 	}
+	printf("At time t=%.3f, rtupdate1() called. node 1 receives a packet from node %d\n",clocktime,rcvdpkt->sourceid );
 	for(i = 0; i< 4; ++i){
 		if(rcvdpkt->mincost[i] + dt1.costs[rcvdpkt->sourceid][rcvdpkt->sourceid] < dt1.costs[i][rcvdpkt->sourceid]){
 			needUpdate = 1;
@@ -562,16 +576,13 @@ extern void rtupdate1(struct rtpkt *rcvdpkt){
 				}
 			}
 		}
+    packet.mincost[1] = 0;
 		packet.sourceid = 1;
 		packet.destid = 0;
 		tolayer2(packet);
 
 		packet.sourceid = 1;
 		packet.destid = 2;
-		tolayer2(packet);
-
-		packet.sourceid = 0;
-		packet.destid = 3;
 		tolayer2(packet);
 	}
 	printdt(1, &dt1);
@@ -583,6 +594,7 @@ extern void rtupdate2(struct rtpkt *rcvdpkt){
 	for(i = 0; i< 4; i++){
 	packet.mincost[i] = INFINITY;
 	}
+	printf("At time t=%.3f, rtupdate2() called. node 2 receives a packet from node %d\n",clocktime,rcvdpkt->sourceid );
 	for(i = 0; i< 4; ++i){
 		if(rcvdpkt->mincost[i] + dt2.costs[rcvdpkt->sourceid][rcvdpkt->sourceid] < dt2.costs[i][rcvdpkt->sourceid]){
 			needUpdate = 1;
@@ -597,6 +609,7 @@ extern void rtupdate2(struct rtpkt *rcvdpkt){
 				}
 			}
 		}
+    packet.mincost[2] = 0;
 		packet.sourceid = 2;
 		packet.destid = 0;
 		tolayer2(packet);
@@ -617,8 +630,9 @@ extern void rtupdate3(struct rtpkt *rcvdpkt){
 	for(i = 0; i< 4; i++){
 	packet.mincost[i] = INFINITY;
 	}
+	printf("At time t=%.3f, rtupdate3() called. node 3 receives a packet from node %d\n",clocktime,rcvdpkt->sourceid );
 	for(i = 0; i< 4; ++i){
-		if(rcvdpkt->mincost[i] + dt3.costs[rcvdpkt->sourceid][rcvdpkt->sourceid] < dt3.costs[i][rcvdpkt->sourceid]){
+		if((rcvdpkt->mincost[i] + dt3.costs[rcvdpkt->sourceid][rcvdpkt->sourceid]) < dt3.costs[i][rcvdpkt->sourceid]){
 			needUpdate = 1;
 			dt3.costs[i][rcvdpkt->sourceid] = rcvdpkt->mincost[i] + dt3.costs[rcvdpkt->sourceid][rcvdpkt->sourceid];
 		}
@@ -631,6 +645,7 @@ extern void rtupdate3(struct rtpkt *rcvdpkt){
 				}
 			}
 		}
+    packet.mincost[3] = 0;
 		packet.sourceid = 3;
 		packet.destid = 0;
 		tolayer2(packet);
@@ -641,34 +656,65 @@ extern void rtupdate3(struct rtpkt *rcvdpkt){
 	}
 	printdt(3, &dt3);
 }
+// to save the previous link costs
+int prevLinkCost = 1;
+
 extern void linkhandler0(int linkid, int newcost){
-	dt0.costs[0][linkid] = newcost;
-	packet.sourceid = 0;
+	printf("At time t=%.3f, linkhandler0() called \n", clocktime);
+  printf("New cost of linkhandler0 %d is: %d \n",linkid, newcost);
+  int i, j;
+  for(i = 0; i < 4; i++){
+          dt0.costs[i][linkid] = newcost + dt0.costs[i][linkid] - prevLinkCost;
+          for(j =0; j < 4; j++){
+            if(dt0.costs[i][j] < packet.mincost[i]){
+              packet.mincost[i]  = dt0.costs[i][j];
+            }
+          }
+  }
+  prevLinkCostdr = newcost;
+  printdt(0,&dt0);
+
+  packet.sourceid = 0;
 	packet.destid = 1;
-	packet.mincost[linkid] = newcost;
+  packet.mincost[0] = 0;
 	tolayer2(packet);
 
-	packet.sourceid = 0;
+  packet.sourceid = 0;
 	packet.destid = 2;
-	packet.mincost[linkid] = newcost;
+  packet.mincost[0] = 0;
 	tolayer2(packet);
 
 	packet.sourceid = 0;
 	packet.destid = 3;
-	packet.mincost[linkid] = newcost;
+  packet.mincost[0] = 0;
 	tolayer2(packet);
+
 
 }
 extern void linkhandler1(int linkid, int newcost){
-	dt1.costs[1][linkid] = newcost;
+	printf("At time t=%.3f, linkhandler1() called \n", clocktime);
+  printf("New cost of linkhandler1 %d is: %d \n",linkid, newcost);
 
-	packet.sourceid = 1;
-	packet.destid = 1;
-	packet.mincost[linkid] = newcost;
-	tolayer2(packet);
+  int i, j;
+  for(i = 0; i < 4; i++){
+          dt1.costs[i][linkid] = newcost + dt1.costs[i][linkid] - prevLinkCost;
+          for(j =0; j < 4; j++){
+            if(dt1.costs[i][j] < packet.mincost[i]){
+              packet.mincost[i]  = dt1.costs[i][j];
+            }
+          }
+  }
+  prevLinkCost = newcost;
+  printdt(1,&dt1);
 
 	packet.sourceid = 1;
 	packet.destid = 2;
-	packet.mincost[linkid] = newcost;
+  packet.mincost[1] = 0;
 	tolayer2(packet);
+
+  packet.sourceid = 1;
+  packet.destid = 0;
+  packet.mincost[1] = 0;
+  tolayer2(packet);
+
 }
