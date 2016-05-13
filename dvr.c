@@ -671,9 +671,9 @@ extern void linkhandler0(int linkid, int newcost){
             }
           }
   }
-  prevLinkCostdr = newcost;
+  prevLinkCost = newcost;
   printdt(0,&dt0);
-
+  packet.mincost[linkid] = newcost;
   packet.sourceid = 0;
 	packet.destid = 1;
   packet.mincost[0] = 0;
@@ -706,6 +706,7 @@ extern void linkhandler1(int linkid, int newcost){
   }
   prevLinkCost = newcost;
   printdt(1,&dt1);
+  packet.mincost[linkid] = newcost;
 
 	packet.sourceid = 1;
 	packet.destid = 2;
